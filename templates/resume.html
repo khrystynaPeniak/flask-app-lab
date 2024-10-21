@@ -1,0 +1,53 @@
+{% extends 'base.html' %}
+
+{% block content %}
+<section id="about" class="mb-5">
+    <h2 class="section-title">About</h2>
+    <div class="row">
+        <div class="col-md-4">
+            <img src="{{ url_for('static', filename='images/myphoto.jpg') }}" alt="Моє фото" class="img-fluid rounded-circle profile-image">
+        </div>
+        <div class="col-md-8">
+            <h3>Христина Пеняк</h3>
+            <p>19 років</p>
+            <p class="lead">Студент</p>
+            <p>Привіт, я студентка 3 курсу спеціальності "Інженерія програмного забезпечення". 
+                На даний момент я активно займаюся вивченням різних аспектів програмування та розробки програмного забезпечення.
+            </p>
+        </div>
+    </div>
+</section>
+
+<section id="education" class="mb-5">
+    <h2 class="section-title">Education</h2>
+    <div class="card">
+        <div class="card-body">
+            <h5 class="card-title">Прикарпатський національний університет імені Василя Стефаника</h5>
+            <p class="card-text">121 "Інженерія програмного забезпечення"</p>
+        </div>
+    </div>
+</section>
+
+<section id="skills" class="mb-5">
+    <h2 class="section-title">Skills</h2>
+    <div class="row">
+        <div class="col-md-6">
+            <ul class="list-group">
+                <li class="list-group-item">Python, Kotlin, JavaScript</li>
+                <li class="list-group-item">HTML5, CSS3, Bootstrap, SASS</li>
+                <li class="list-group-item">SQL, PostgreSQL</li>
+                <li class="list-group-item">OS Linux</li>
+                <li class="list-group-item">Git, Github</li>
+            </ul>
+        </div>
+    </div>
+</section>
+
+<section id="experience" class="mb-5">
+    <h2 class="section-title">Experience</h2>
+    <div class="timeline">
+        <p>Поки що немає</p>
+    </div>
+</section>
+
+{% endblock %}
