@@ -1,0 +1,24 @@
+{% extends 'base.html' %}
+{% block title %} Greeting Page {% endblock %}
+{% block content %}
+<nav class="nav_greet greet_links p-2 pb-1">
+    <ul>
+        <li>
+            <a href="{{ url_for('users.greetings', name='John', age=30) }}">Greet John</a>
+        </li>
+        <li>
+            <a href="{{ url_for('users.admin') }}">Admin</a>
+        </li>
+    </ul>
+</nav>
+<div class="card p-3 hover_shadow mb-5 mt-4">
+    <div class="card-body">
+        <h2>Hello, {{ name }}!</h2>
+        {% if age %}
+        <h4 class="provided">You are: {{ age }} years old.</h4>
+        {% else %}
+        <h4 class="not_provided">Age is unknown</h4>
+        {% endif %}
+    </div>
+</div>
+{% endblock %}
