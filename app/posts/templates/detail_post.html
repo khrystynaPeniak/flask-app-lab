@@ -1,0 +1,15 @@
+{% extends 'base.html' %}
+
+{% block title %} POSTS {% endblock %}
+
+{% block content %}
+<h1>Post № {{ ppost.id }} - {{ post.title }}</h1>
+
+<div class="content">
+    {{ post.content }}
+</div>
+
+<p>Author: {{ post.author}}</p>
+
+<a href="{{ url_for('posts.get_posts')}}">Return to posts</a>
+{% endblock %} 
