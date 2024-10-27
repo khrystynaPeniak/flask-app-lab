@@ -25,3 +25,19 @@ body {
         text-align: center;
     } 
 }
+
+.greet_links a {
+    text-decoration: none;
+    color: #240c00;
+}
+
+.provided{
+    color: #548c2f;
+}
+.not_provided{
+    color: #d62625;
+}
+
+.nav_greet {
+    background-color: #f4f3ee;
+}
