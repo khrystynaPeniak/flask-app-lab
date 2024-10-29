@@ -7,9 +7,8 @@ from flask import render_template, request, redirect, url_for
 def greetings(name):
     name = name.upper()
     age = request.args.get("age", None, int)   
-
-    return render_template("hi.html", 
-                           name=name, age=age)
+    #year = 2024 - age
+    return render_template("hi.html", name=name, age=age)
 
 @user_bp.route("/admin")
 def admin():
