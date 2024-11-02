@@ -7,25 +7,35 @@ def get_profile():
     if "username" in session:
         username_value = session["username"]
         return render_template("profile.html", username=username_value)
-    flash("Invalid: Session.", "danger")
-    return redirect(url_for("users.login"))
-
+    else:
+        flash("Error: access denied. Please login.", "danger")
+        return redirect(url_for("users.login"))
 
 @user_bp.route("/login",  methods=['GET', 'POST'])
 def login():
+    
+    valid_username = "user"
+    valid_password = "1234"
+    
     if request.method == "POST":
-        username = request.form["login"]
-        session["username"] = username
-        flash("Success: session added successfully.", "success")
-        return redirect(url_for("users.get_profile"))
+        username = request.form.get("username")
+        password = request.form.get("password")
+        if username == valid_username and password == valid_password:
+            session["username"] = username
+            flash("Success: session added successfully.", "success")
+            return redirect(url_for("users.get_profile"))
+        else:
+            flash("Error: Invalid username or password.", "danger")
+            return redirect(url_for("users.login"))
+        
     return render_template("login.html")
 
 @user_bp.route('/logout')
 def logout():
     # Видалення користувача із сесії
     session.pop('username', None)
-    session.pop('age', None)
-    return redirect(url_for('users.get_profile'))
+    flash("You have successfully logged out.", "info")
+    return redirect(url_for("users.login"))
 
 #users
 
