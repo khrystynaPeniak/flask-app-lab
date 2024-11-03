@@ -2,15 +2,39 @@ from . import user_bp
 from flask import render_template, request, redirect, url_for, make_response, session, flash 
 from datetime import timedelta, datetime
 
-@user_bp.route("/profile")
+@user_bp.route("/profile", methods=['GET', 'POST'])
 def get_profile():
-    if "username" in session:
-        username_value = session["username"]
-        return render_template("profile.html", username=username_value)
-    else:
+    if "username" not in session:
         flash("Error: access denied. Please login.", "danger")
         return redirect(url_for("users.login"))
-
+    
+    if request.method == "POST":
+        response = make_response(redirect(url_for("users.get_profile")))
+        
+        if "add_cookie" in request.form:
+            key, value = request.form.get("cookie_key"), request.form.get("cookie_value")
+            if key and value:
+                expiry = int(request.form.get("cookie_expiry", 3600))
+                response.set_cookie(key, value, max_age=timedelta(seconds=expiry))
+                flash(f"Cookie '{key}' added successfully.", "success")
+            
+        elif "delete_cookie_key" in request.form:
+            key = request.form.get("delete_key")
+            if key in request.cookies:
+                response.set_cookie(key, "", expires=0)
+                flash(f"Cookie '{key}' deleted.", "success")
+                
+        elif "delete_all_cookies" in request.form:
+            for key in request.cookies:
+                if key != 'session':
+                    response.set_cookie(key, "", expires=0)
+            flash("All cookies deleted.", "success")
+            
+        return response
+    
+    cookies = [(k, v) for k, v in request.cookies.items() if k != 'session']
+    return render_template("profile.html", username=session["username"], cookies=cookies)
+    
 @user_bp.route("/login",  methods=['GET', 'POST'])
 def login():
     
