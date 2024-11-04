@@ -2,6 +2,16 @@ from . import user_bp
 from flask import render_template, request, redirect, url_for, make_response, session, flash 
 from datetime import timedelta, datetime
 
+@user_bp.route("/set-theme/<theme>")
+def set_theme(theme):
+    if theme not in ['light', 'dark']:
+        theme = 'light'  
+    
+    response = make_response(redirect(url_for("users.get_profile")))
+    response.set_cookie('theme_preference', theme, max_age=timedelta(days=365))  
+    flash(f"Theme changed to {theme} mode", "success")
+    return response
+
 @user_bp.route("/profile", methods=['GET', 'POST'])
 def get_profile():
     if "username" not in session:
@@ -26,14 +36,19 @@ def get_profile():
                 
         elif "delete_all_cookies" in request.form:
             for key in request.cookies:
-                if key != 'session':
+                if key not in ['session', 'theme_preference']:  
                     response.set_cookie(key, "", expires=0)
             flash("All cookies deleted.", "success")
             
         return response
     
-    cookies = [(k, v) for k, v in request.cookies.items() if k != 'session']
-    return render_template("profile.html", username=session["username"], cookies=cookies)
+    theme = request.cookies.get('theme_preference', 'light')
+    
+    cookies = [(k, v) for k, v in request.cookies.items() 
+               if k not in ['session', 'theme_preference']]
+    
+    return render_template("profile.html", username=session["username"], cookies=cookies, theme=theme
+    )
     
 @user_bp.route("/login",  methods=['GET', 'POST'])
 def login():
