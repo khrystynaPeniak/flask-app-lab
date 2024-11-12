@@ -14,6 +14,7 @@
         {% for post in posts %}
         <div class="col">
             <div class="card h-100 {% if not post.is_active %}bg-light{% endif %}">
+                <img src="{{ url_for('.static', filename='images/photo_card.jpg') }}" class="card-img-top" alt="Post Image" height="180px">
                 <div class="card-body">
                     <h5 class="card-title">{{ post.title }}</h5>
                     <h6 class="card-subtitle mb-2 text-muted">

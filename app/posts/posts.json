@@ -1,0 +1,20 @@
+[
+    {
+        "id": 1,
+        "title": "Python",
+        "content": "forever. test content #1",
+        "publish_date": "22.11.2024",
+        "category": "tech",
+        "author": "user",
+        "is_active": true
+    },
+    {
+        "id": 2,
+        "title": "Test",
+        "content": "test content #2",
+        "publish_date": "16.11.2024",
+        "category": "tech",
+        "author": "user",
+        "is_active": false
+    }
+]
