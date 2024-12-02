@@ -25,6 +25,9 @@
                         <small class="text-muted">
                             By: {{ post.author }}<br>
                             Published: {{ post.date_posted }}<br>
+                            Tags: {% for tag in post.tags %}
+                            <span class="tag">{{ tag.name }}</span>{% if not loop.last %} / {% endif %}
+                            {% endfor %}
                         </small>
                     </div>
                 </div>

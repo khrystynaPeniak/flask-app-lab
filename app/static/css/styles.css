@@ -15,6 +15,10 @@ body {
     margin-bottom: 20px;
 }
 
+span.tag{
+    color: #1d1d1d;
+}
+
 @media (max-width: 768px) {
     .profile-image {
         max-width: 200px;

@@ -1,21 +1,30 @@
-from flask import request, render_template, current_app
-#from . import app
+from flask import Flask
+from flask_sqlalchemy import SQLAlchemy
+from flask_migrate import Migrate
+from sqlalchemy.orm import DeclarativeBase
 
-@current_app.route('/')
-def main():
-    return render_template("base.html")
+class Base(DeclarativeBase):
+    pass
 
-@current_app.route('/homepage') 
-def home():
-    """View for the Home page of your website."""
-    agent = request.user_agent
+db = SQLAlchemy(model_class=Base)
+migrate = Migrate()
 
-    return render_template("home.html", agent=agent)
+def create_app(config_name="config"):
+    app = Flask(__name__)
+    app.config.from_object(config_name)  # налаштування з об'єкта
+    
+    db.init_app(app)
+    migrate.init_app(app, db)
 
-@current_app.errorhandler(404)
-def page_not_found(error):
-    return render_template('404.html'), 404
+    with app.app_context():
+        from . import views
+        from .posts import post_bp
+        from .users import user_bp
 
-@current_app.route('/resume')
-def resume():
-    return render_template("resume.html", title="My resume")
+        app.register_blueprint(post_bp)
+        app.register_blueprint(user_bp)
+        
+        #from app.posts.models import Post
+        #db.create_all()
+
+    return app

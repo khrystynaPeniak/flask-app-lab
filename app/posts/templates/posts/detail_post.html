@@ -15,8 +15,13 @@
             <small>
                 <i class="bi bi-folder"></i> {{ post.category }} |
                 <i class="bi bi-person"></i> {{ post.author }} |
-                <i class="bi bi-calendar"></i> {{ post.date_posted }}
+                <i class="bi bi-calendar"></i> {{ post.date_posted }} |
             </small>
+            <p>Tags:
+                {% for tag in post.tags %}
+                <span class="tag">{{ tag.name }}</span>{% if not loop.last %} / {% endif %}
+                {% endfor %}
+            </p>
         </div>
 
     </div>
