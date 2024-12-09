@@ -1,5 +1,13 @@
-SECRET_KEY = "secret"
-FLASK_DEBUG = 1
+class Config:
+    SECRET_KEY = 'secret'
+    SQLALCHEMY_TRACK_MODIFICATIONS = False
 
-SQLALCHEMY_DATABASE_URI = 'sqlite:///data.sqlite'
-SQLALCHEMY_TRACK_MODIFICATIONS = False
+class DevConfig(Config):
+    FLASK_DEBUG = 1
+    SQLALCHEMY_DATABASE_URI = 'sqlite:///data.sqlite'
+
+class TestConfig(Config):
+    TESTING = True
+    SQLALCHEMY_DATABASE_URI = 'sqlite:///:memory:'
+    WTF_CSRF_ENABLED = False
+    

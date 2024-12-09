@@ -1,6 +1,10 @@
 from . import user_bp
 from flask import render_template, request, redirect, url_for, make_response, session, flash 
 from datetime import timedelta, datetime
+from .forms import RegistrationForm, LoginForm
+from .models import User
+from flask_login import login_user, login_required, current_user, logout_user
+from .. import db
 
 @user_bp.route("/set-theme/<theme>")
 def set_theme(theme):
@@ -50,33 +54,85 @@ def get_profile():
     return render_template("profile.html", username=session["username"], cookies=cookies, theme=theme
     )
     
-@user_bp.route("/login",  methods=['GET', 'POST'])
+@user_bp.route('/register', methods=['GET', 'POST'])
+def register():
+    if current_user.is_authenticated:
+        return redirect(url_for('users.account'))
+    
+    form = RegistrationForm()
+    if form.validate_on_submit():
+        #hashed_password = bcrypt.generate_password_hash(form.password.data).decode('utf-8')
+        hashed_password = User.hash_password(form.password.data)
+        
+        user = User(
+            username=form.username.data, email=form.email.data, password=hashed_password
+        )
+        
+        db.session.add(user)
+        db.session.commit()
+        
+        flash(f'Account for {form.username.data} was created!', 'success')
+        return redirect(url_for('users.login'))
+    return render_template('register.html', form=form, title='Register')
+    
+@user_bp.route("/login", methods=['GET', 'POST'])
 def login():
     
-    valid_username = "user"
-    valid_password = "1234"
+    if current_user.is_authenticated:
+        return redirect(url_for('users.account'))
     
-    if request.method == "POST":
-        username = request.form.get("username")
-        password = request.form.get("password")
-        if username == valid_username and password == valid_password:
-            session["username"] = username
-            flash("Success: session added successfully.", "success")
-            return redirect(url_for("users.get_profile"))
-        else:
-            flash("Error: Invalid username or password.", "danger")
-            return redirect(url_for("users.login"))
-        
-    return render_template("login.html")
+    form = LoginForm()
+    if form.validate_on_submit():
+        username = form.username.data
+        password = form.password.data
+        user = User.query.filter_by(username=username).first()
+        if user and user.check_password(password):
+            #session["username"] = username
+            login_user(user, remember=form.remember.data)
+            flash('You logged in successfully!', 'success')
+            return redirect(url_for('users.account'))
+        flash("Error: Invalid username or password.", "danger")
+    return render_template("login.html", form=form, title='Login')
+
+
+@user_bp.route("/account")
+@login_required
+def account():
+    return render_template("account.html", user=current_user)
+
+@user_bp.route('/get-all-users', methods=['GET'])
+@login_required
+def get_all_users():
+    users = User.query.all()
+    users_count = len(users)
+    return render_template('users_list.html', users=users, users_count=users_count)
 
 @user_bp.route('/logout')
 def logout():
-    # Видалення користувача із сесії
-    session.pop('username', None)
+    logout_user()
     flash("You have successfully logged out.", "info")
     return redirect(url_for("users.login"))
 
-#users
+
+# @user_bp.route("/login",  methods=['GET', 'POST'])
+# def login():
+    
+#     valid_username = "user"
+#     valid_password = "1234"
+    
+#     if request.method == "POST":
+#         username = request.form.get("username")
+#         password = request.form.get("password")
+#         if username == valid_username and password == valid_password:
+#             session["username"] = username
+#             flash("Success: session added successfully.", "success")
+#             return redirect(url_for("users.get_profile"))
+#         else:
+#             flash("Error: Invalid username or password.", "danger")
+#             return redirect(url_for("users.login"))
+        
+#     return render_template("login.html")
+
 
 @user_bp.route("/hi/<string:name>") 
 def greetings(name):
