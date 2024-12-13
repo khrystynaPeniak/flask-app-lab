@@ -1,0 +1,29 @@
+{% extends 'base.html' %}
+{% from 'form_macros.html' import render_field %}
+{% block content %}
+<div class="container p-5 bg-light shadow rounded mt-5">
+    <h1 class="fs-3 fw-bold border-bottom pb-3 mb-4 text-center text-primary">Update Account Information</h1>
+    <form method="post" action="{{ url_for('users.update_account') }}" enctype="multipart/form-data" novalidate class="needs-validation">
+        {{ form.hidden_tag() }}
+        <div class="row mb-3">
+            <div class="col-md-6">
+                {{ render_field(form.username, class_="form-control", placeholder="Enter your username") }}
+            </div>
+            <div class="col-md-6">
+                {{ render_field(form.email, class_="form-control", placeholder="Enter your email") }}
+            </div>
+        </div>
+        <div class="mb-3">
+            {{ render_field(form.image_file, class_="form-control form-control-file") }}
+            <small class="form-text text-muted">Upload a profile picture (optional).</small>
+        </div>
+        <div class="mb-3">
+            {{ render_field(form.about_me, class_="form-control", placeholder="Write something about yourself", rows=4) }}
+        </div>
+        <div class="text-center">
+            {{ form.submit(class="btn btn-primary px-4 py-2") }}
+        </div>
+    </form>
+</div>
+{% endblock %}
+

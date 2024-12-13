@@ -2,34 +2,56 @@
 {% block title %}Account Profile{% endblock %}
 
 {% block content %}
-<div class="container py-4">
+<div class="container py-5">
     <div class="row justify-content-center">
-        <div class="col-md-8">
-            <div class="card">
-                <div class="card-header">
-                    <h2 class="text-center mb-0">Profile Information</h2>
+        <div class="col-lg-8">
+            <div class="card border-0 shadow-sm">
+                <div class="position-relative">
+                    <div class="bg-primary text-white p-4 rounded-top">
+                        <div class="text-center position-relative">
+                            <img src="{{ url_for('.static', filename='img/' + (current_user.image_file or 'default.jpg')) }}"
+                                 alt="Profile Picture"
+                                 class="rounded-circle border border-4 border-white shadow"
+                                 style="width: 120px; height: 120px; object-fit: cover; margin-bottom: -60px;">
+                        </div>
+                    </div>
+                    <div class="text-center mt-5 pt-2">
+                        <h3 class="fw-bold mb-1">{{ current_user.username }}</h3>
+                        <p class="text-muted small mb-3">{{ current_user.email }}</p>
+                    </div>
                 </div>
-                <div class="card-body">
-                    <div class="row mb-3">
-                        <div class="col-sm-3">
-                            <p class="mb-0"><strong>Username:</strong></p>
-                        </div>
-                        <div class="col-sm-9">
-                            <p class="text-muted mb-0">{{  current_user.username }}</p>
-                        </div>
-                    </div>
-                    <div class="row mb-3">
-                        <div class="col-sm-3">
-                            <p class="mb-0"><strong>Email:</strong></p>
-                        </div>
-                        <div class="col-sm-9">
-                            <p class="text-muted mb-0">{{  current_user.email }}</p>
+                <div class="card-body px-4">
+                    <div class="mb-4">
+                        <h5 class="fw-bold mb-3 text-primary">About Me</h5>
+                        <div class="bg-light p-3 rounded">
+                            {% if current_user.about_me %}
+                                {{ current_user.about_me }}
+                            {% else %}
+                                <p class="text-muted mb-0">No information provided yet.</p>
+                            {% endif %}
                         </div>
                     </div>
-                    <div class="row">
-                        <div class="col text-center">
-                            <a href="{{ url_for('users.logout') }}" class="btn btn-danger">Logout</a>
+                    <div class="mb-4">
+                        <h5 class="fw-bold mb-3 text-primary">Last Active</h5>
+                        <div class="bg-light p-3 rounded">
+                            <p class="mb-0">
+                                    {{ current_user.last_seen.strftime('%B %d, %Y at %H:%M') }}
+                            </p>
                         </div>
+                    </div>
+                    <div class="d-grid gap-2 d-md-flex justify-content-md-center mt-4">
+                        <a href="{{ url_for('users.update_account') }}" 
+                           class="btn btn-secondary px-4">
+                            Edit Profile
+                        </a>
+                        <a href="{{ url_for('users.logout') }}" 
+                           class="btn btn-danger px-4">
+                            Logout
+                        </a>
+                        <a href="{{ url_for('users.change_password') }}" 
+                        class="btn btn-dark px-4">
+                         Change password
+                     </a>
                     </div>
                 </div>
             </div>

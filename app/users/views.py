@@ -3,8 +3,10 @@ from flask import render_template, request, redirect, url_for, make_response, se
 from datetime import timedelta, datetime
 from .forms import RegistrationForm, LoginForm
 from .models import User
+from .utils import delete_old_user_image, save_user_image
 from flask_login import login_user, login_required, current_user, logout_user
-from .. import db
+from .forms import RegistrationForm, LoginForm, UpdateAccountForm, ChangePasswordForm
+from .. import db  
 
 @user_bp.route("/set-theme/<theme>")
 def set_theme(theme):
@@ -114,25 +116,43 @@ def logout():
     return redirect(url_for("users.login"))
 
 
-# @user_bp.route("/login",  methods=['GET', 'POST'])
-# def login():
-    
-#     valid_username = "user"
-#     valid_password = "1234"
-    
-#     if request.method == "POST":
-#         username = request.form.get("username")
-#         password = request.form.get("password")
-#         if username == valid_username and password == valid_password:
-#             session["username"] = username
-#             flash("Success: session added successfully.", "success")
-#             return redirect(url_for("users.get_profile"))
-#         else:
-#             flash("Error: Invalid username or password.", "danger")
-#             return redirect(url_for("users.login"))
-        
-#     return render_template("login.html")
+@user_bp.route('account/update_account', methods=['GET', 'POST'])
+@login_required
+def update_account():
+    account = current_user
+    form = UpdateAccountForm(obj=account)
+    if form.validate_on_submit():
+        account.username = form.username.data
+        account.email = form.email.data
+        account.about_me = form.about_me.data
 
+        file = form.image_file.data
+        if file and not isinstance(file, str):  
+            delete_old_user_image(user_bp, account.image_file)
+            new_filename = save_user_image(file, user_bp)
+            account.image_file = new_filename
+
+        db.session.commit()
+        flash('Account updated successfully', 'success')
+        return redirect(url_for('users.account'))
+
+    return render_template('edit_page.html', form=form)
+
+@user_bp.route('account/change_password', methods=['GET', 'POST'])
+@login_required
+def change_password():
+    form = ChangePasswordForm()
+    if form.validate_on_submit():
+        if current_user.check_password(form.current_password.data):
+            new_hashed_password = User.hash_password(form.new_password.data)
+            current_user.password = new_hashed_password
+            db.session.commit()
+            flash('Password updated successfully!', 'success')
+            return redirect(url_for('users.account'))
+        else:
+            flash('Current password is incorrect!', 'danger')
+            
+    return render_template('change_password.html', form=form)
 
 @user_bp.route("/hi/<string:name>") 
 def greetings(name):

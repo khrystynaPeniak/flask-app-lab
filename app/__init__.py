@@ -3,7 +3,8 @@ from flask_sqlalchemy import SQLAlchemy
 from flask_migrate import Migrate
 from sqlalchemy.orm import DeclarativeBase
 from flask_bcrypt import Bcrypt
-from flask_login import LoginManager
+from flask_login import LoginManager, current_user
+from datetime import datetime
 
 class Base(DeclarativeBase):
     pass
@@ -38,5 +39,10 @@ def create_app(config_name='config.DevConfig'):
         
         #from app.posts.models import Post
         #db.create_all()
-
+    @app.before_request
+    def before_request():
+        if current_user.is_authenticated:
+            current_user.last_seen = datetime.now()
+            db.session.commit()
+            
     return app

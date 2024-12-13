@@ -1,5 +1,7 @@
 from app import db, bcrypt, login_manager
 from flask_login import UserMixin
+from datetime import datetime as dt
+
 
 class User(UserMixin, db.Model):
     __tablename__ = "users"
@@ -8,6 +10,9 @@ class User(UserMixin, db.Model):
     username = db.Column(db.String(20), nullable=False)
     email = db.Column(db.String(120), unique=True, nullable=False)
     password = db.Column(db.String(60), nullable=False)
+    image_file = db.Column(db.String(20), nullable=True, default='default.jpg')
+    about_me = db.Column(db.Text, nullable=True)
+    last_seen = db.Column(db.DateTime, nullable=True, default=dt.now())
     
     def __repr__(self):
         return f"User('{self.email}')"
