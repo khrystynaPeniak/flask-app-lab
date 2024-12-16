@@ -5,6 +5,7 @@ from sqlalchemy.orm import DeclarativeBase
 from flask_bcrypt import Bcrypt
 from flask_login import LoginManager, current_user
 from datetime import datetime
+from sqlalchemy import text
 
 class Base(DeclarativeBase):
     pass
@@ -33,12 +34,16 @@ def create_app(config_name='config.DevConfig'):
         
         from .posts import post_bp
         from .users import user_bp
+        from .cellphones import cellphone_bp 
 
         app.register_blueprint(post_bp)
         app.register_blueprint(user_bp)
+        app.register_blueprint(cellphone_bp)
         
-        #from app.posts.models import Post
-        #db.create_all()
+        from app.cellphones.models import Cellphone
+        db.create_all()
+        
+        
     @app.before_request
     def before_request():
         if current_user.is_authenticated:

@@ -1,0 +1,38 @@
+{% extends "base.html" %}
+
+{% block content %}
+<div class="container mt-4">
+    <div class="card">
+        <div class="card-body">
+            <h1 class="card-title">{{ cellphone.name }}</h1>
+            <p class="card-text">{{ cellphone.description }}</p>
+            <p class="card-text">
+                <strong>Price:</strong> ${{ "%.2f"|format(cellphone.price) }}
+            </p>
+            <p class="card-text">
+                <strong>Category:</strong> 
+                {{ cellphone.category.category_name if cellphone.category else 'Not point at' }}
+            </p>
+            <p class="card-text">
+                <small class="text-muted">Author: {{ cellphone.author.username }}</small>
+            </p>
+            {% if current_user.is_authenticated and current_user.id == cellphone.user_id %}
+            <div class="mt-4">
+                <div class="d-flex">
+                    <a href="{{ url_for('.edit_cellphone', id=cellphone.id) }}" 
+                    class="btn btn-warning me-3">Edit</a>
+                    <form action="{{ url_for('.delete_cellphone', id=cellphone.id) }}" 
+                        method="POST">
+                        <button type="submit" class="btn btn-danger" 
+                                onclick="return confirm('Are you sure?')">Delete</button>
+                    </form>
+                </div>
+            </div>
+            {% endif %}
+        </div>
+    </div>
+    
+    <a href="{{ url_for('.get_cellphones') }}" 
+       class="btn btn-secondary mt-3">Back</a>
+</div>
+{% endblock %}
